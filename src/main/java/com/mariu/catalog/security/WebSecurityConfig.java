@@ -20,11 +20,8 @@ public class WebSecurityConfig {
   CustomUserDetailsService userDetailsService;
   @Autowired
   private AuthenticationEntryPointJwt unauthorizedHandler;
-
-  @Bean
-  public AuthenticationTokenFilter authenticationJwtTokenFilter() {
-    return new AuthenticationTokenFilter();
-  }
+ @Autowired
+  private AuthCookieFilter authCookieFilter;
 
   @Bean
   public AuthenticationManager authenticationManager(
@@ -49,7 +46,7 @@ public class WebSecurityConfig {
             .requestMatchers("/api/auth/**").permitAll()
             .anyRequest().authenticated());
 
-    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+   http.addFilterBefore(authCookieFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

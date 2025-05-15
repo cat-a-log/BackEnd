@@ -56,4 +56,8 @@ public class JwtUtil {
     }
     return false;
   }
+
+     public int expirationInSeconds() {
+    return this.jwtExpirationMs / 1000;
+  }
 }

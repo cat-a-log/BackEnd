@@ -13,6 +13,9 @@ import com.mariu.catalog.model.User;
 import com.mariu.catalog.repository.UserRepository;
 import com.mariu.catalog.security.JwtUtil;
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
@@ -26,15 +29,23 @@ public class AuthenticationController {
   JwtUtil jwtUtils;
 
   @PostMapping("/signin")
-  public String authenticateUser(@RequestBody AuthUser authUser) {
+  public ResponseEntity<?> authenticateUser(@RequestBody AuthUser authUser, HttpServletResponse response) {
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             authUser.getEmail(),
             authUser.getPassword()));
 
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+ String jwt = jwtUtils.generateToken(userDetails.getUsername());
 
-    return jwtUtils.generateToken(userDetails.getUsername());
+    // Use a http-only cookie instead of having the Frontend handle the JWT storage.
+    Cookie jwtCookie = new Cookie("authToken", jwt);
+    jwtCookie.setHttpOnly(true);
+    jwtCookie.setPath("/");
+    jwtCookie.setMaxAge(jwtUtils.expirationInSeconds());
+    response.addCookie(jwtCookie);
+  
+      return ResponseEntity.ok().build()
   }
 
   @PostMapping("/signup")
