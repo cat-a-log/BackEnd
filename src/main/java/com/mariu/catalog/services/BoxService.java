@@ -28,4 +28,8 @@ public class BoxService {
   public Page<Box> findBoxes(User user, Pageable paging) {
     return boxRepository.findByCreatedBy(user, paging);
   }
+
+  public void removeBox(Long id) {
+    boxRepository.deleteById(id);
+  }
 }

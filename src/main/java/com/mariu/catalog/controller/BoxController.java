@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +72,18 @@ public class BoxController {
     Page<Box> boxes = boxService.findBoxes(authenticatedUser.get(), paging);
 
     return ResponseEntity.ok(boxes);
+  }
+  
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> deleteBox(@PathVariable Long id) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    boxService.removeBox(id);
+
+    return new ResponseEntity<>(HttpStatus.OK);
   }
   
   private Optional<User> getAuthenticatedUser() {
