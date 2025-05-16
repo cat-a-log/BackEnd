@@ -1,11 +1,14 @@
 package com.mariu.catalog.controller;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,19 +29,44 @@ public class BoxController {
   @Autowired
   BoxService boxService;
 
+
   @PostMapping
   public ResponseEntity<Box> createBox(@RequestBody BoxRequest boxRequest) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    if (authentication == null || !authentication.isAuthenticated()) {
+     Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    User createdBy = userService.findByEmail(userDetails.getUsername());
-
-    Box savedBox = boxService.createBox(boxRequest, createdBy);
+    Box savedBox = boxService.createBox(boxRequest, authenticatedUser.get());
 
     return ResponseEntity.ok().body(savedBox);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<Box> getSingleEvent(@PathVariable Long id) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Optional<Box> box = boxService.findBox(id);
+    if (!box.isPresent()) {
+      return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
+    }
+
+    return ResponseEntity.ok(box.get());
+  }
+
+  private Optional<User> getAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    if (authentication == null || !authentication.isAuthenticated()) {
+      return null;
+    }
+
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+   
+    return Optional.of(userService.findByEmail(userDetails.getUsername()));
+   
   }
 }

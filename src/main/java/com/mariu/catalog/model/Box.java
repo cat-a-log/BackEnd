@@ -37,6 +37,9 @@ public class Box {
     this.color = color;
   }
 
+   public Box() {
+  }
+
    public Box(User createdBy, BoxRequest boxRequest) {
     this.createdBy = createdBy;
     this.name = boxRequest.getName();
@@ -44,7 +47,7 @@ public class Box {
     this.location = boxRequest.getLocation();
     this.color = boxRequest.getColor();
   }
-  
+
   public User getCreatedBy() {
     return this.createdBy;
   }
