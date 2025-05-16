@@ -48,6 +48,10 @@ public class Box {
     this.color = boxRequest.getColor();
   }
 
+ public Long getId() {
+    return this.id;
+  }
+   
   public User getCreatedBy() {
     return this.createdBy;
   }
