@@ -1,5 +1,6 @@
 package com.mariu.catalog.model;
 
+import com.mariu.catalog.dto.BoxRequest;
 import com.mariu.catalog.dto.Color;
 
 import jakarta.persistence.*;
@@ -36,6 +37,14 @@ public class Box {
     this.color = color;
   }
 
+   public Box(User createdBy, BoxRequest boxRequest) {
+    this.createdBy = createdBy;
+    this.name = boxRequest.getName();
+    this.description = boxRequest.getDescription();
+    this.location = boxRequest.getLocation();
+    this.color = boxRequest.getColor();
+  }
+  
   public User getCreatedBy() {
     return this.createdBy;
   }
