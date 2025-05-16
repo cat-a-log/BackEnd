@@ -38,7 +38,7 @@ public class AuthenticationController {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
  String jwt = jwtUtils.generateToken(userDetails.getUsername());
 
-    // Use a http-only cookie instead of having the Frontend handle the JWT storage.
+     
     Cookie jwtCookie = new Cookie("authToken", jwt);
     jwtCookie.setHttpOnly(true);
     jwtCookie.setPath("/");
@@ -62,5 +62,18 @@ public class AuthenticationController {
     userRepository.save(newUser);
 
     return ResponseEntity.ok("User registered successfully!");
+  }
+
+
+  @PostMapping("/logout")
+  public ResponseEntity<?> logoutUser(HttpServletResponse response) {
+    
+    Cookie jwtCookie = new Cookie("authToken", null);
+    jwtCookie.setPath("/");
+    jwtCookie.setMaxAge(0);
+    jwtCookie.setHttpOnly(true);
+
+    response.addCookie(jwtCookie);
+    return ResponseEntity.ok().build();
   }
 }
