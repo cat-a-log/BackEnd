@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -85,7 +86,24 @@ public class BoxController {
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
-  
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<Box> deleteBox(@PathVariable Long id, @RequestBody BoxRequest updates) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Optional<Box> box = boxService.findBox(id);
+    if (!box.isPresent()) {
+      return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
+    }
+
+    Box updatedBox = boxService.updateBox(box.get(), updates);
+
+    return ResponseEntity.ok(updatedBox);
+  }
+
   private Optional<User> getAuthenticatedUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -96,6 +114,5 @@ public class BoxController {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
    
     return Optional.of(userService.findByEmail(userDetails.getUsername()));
-   
   }
 }
