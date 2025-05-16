@@ -1,7 +1,12 @@
 package com.mariu.catalog.controller;
 
+import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -56,7 +61,19 @@ public class BoxController {
 
     return ResponseEntity.ok(box.get());
   }
+@GetMapping
+  public ResponseEntity<Page<Box>> getAllEvents(/* to do: add filters */) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
 
+    Pageable paging = PageRequest.of(0, 10);
+    Page<Box> boxes = boxService.findBoxes(authenticatedUser.get(), paging);
+
+    return ResponseEntity.ok(boxes);
+  }
+  
   private Optional<User> getAuthenticatedUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
