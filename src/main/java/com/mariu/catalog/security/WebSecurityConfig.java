@@ -20,7 +20,7 @@ public class WebSecurityConfig {
   CustomUserDetailsService userDetailsService;
   @Autowired
   private AuthenticationEntryPointJwt unauthorizedHandler;
- @Autowired
+  @Autowired
   private AuthCookieFilter authCookieFilter;
 
   @Bean
@@ -42,10 +42,10 @@ public class WebSecurityConfig {
         .sessionManagement(
             sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .anyRequest().authenticated());
 
-   http.addFilterBefore(authCookieFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(authCookieFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
