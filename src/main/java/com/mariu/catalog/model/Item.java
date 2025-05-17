@@ -1,5 +1,6 @@
 package com.mariu.catalog.model;
 
+import com.mariu.catalog.dto.ItemRequest;
 import jakarta.persistence.*;
 
 @Entity
@@ -24,6 +25,12 @@ public class Item {
     public Item() {
     }
 
+
+     public Item(Box box, ItemRequest itemRequest) {
+    this.name = itemRequest.getName();
+    this.box = box;
+  }
+  
     public Long getId() {
         return this.id;
     }
