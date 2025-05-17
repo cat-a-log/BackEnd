@@ -3,6 +3,9 @@ package com.mariu.catalog.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -66,6 +69,23 @@ public class ItemController {
     }
 
     return ResponseEntity.ok(item.get());
+  }
+@GetMapping("/box/{boxId}/item")
+  public ResponseEntity<Page<Item>> getAllItems(@PathVariable Long boxId/*No filters yet */) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Optional<Box> box = boxService.findBox(boxId);
+    if (!box.isPresent()) {
+      return new ResponseEntity<Page<Item>>(HttpStatus.NOT_FOUND);
+    }
+
+    Pageable paging = PageRequest.of(0, 10);
+    Page<Item> items = itemService.findItemsForBox(box.get(), paging);
+
+    return ResponseEntity.ok(items);
   }
 
   private Optional<User> getAuthenticatedUser() {

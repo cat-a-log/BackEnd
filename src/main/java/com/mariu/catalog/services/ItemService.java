@@ -1,14 +1,16 @@
 package com.mariu.catalog.services;
 
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.mariu.catalog.dto.ItemRequest;
 import com.mariu.catalog.model.Box;
 import com.mariu.catalog.model.Item;
 import com.mariu.catalog.repository.ItemRepository;
-
 
 @Service
 public class ItemService {
@@ -21,5 +23,9 @@ public class ItemService {
 
   public Optional<Item> findItem(Long id) {
     return itemRepository.findById(id);
+  }
+
+  public Page<Item> findItemsForBox(Box box, Pageable paging) {
+    return itemRepository.findByBox(box, paging);
   }
 }
