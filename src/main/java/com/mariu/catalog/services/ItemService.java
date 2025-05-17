@@ -29,4 +29,8 @@ public class ItemService {
   public Page<Item> findItemsForBox(Box box, Pageable paging) {
     return itemRepository.findByBox(box, paging);
   }
+
+  public void removeItem(Long id) {
+    itemRepository.deleteById(id);
+  }
 }
