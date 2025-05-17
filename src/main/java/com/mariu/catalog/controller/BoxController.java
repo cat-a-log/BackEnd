@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mariu.catalog.dto.BoxRequest;
+import com.mariu.catalog.dto.BoxResponse;
+import com.mariu.catalog.dto.BoxWithItemsResponse;
 import com.mariu.catalog.dto.Create;
 import com.mariu.catalog.dto.Update;
 import com.mariu.catalog.model.Box;
@@ -39,7 +41,7 @@ public class BoxController {
   BoxService boxService;
 
   @PostMapping
-  public ResponseEntity<Box> createBox(@Validated({ Create.class }) @RequestBody BoxRequest boxRequest) {
+  public ResponseEntity<BoxResponse> createBox(@Validated({ Create.class }) @RequestBody BoxRequest boxRequest) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -47,11 +49,11 @@ public class BoxController {
 
     Box savedBox = boxService.createBox(boxRequest, authenticatedUser.get());
 
-    return ResponseEntity.ok().body(savedBox);
+    return ResponseEntity.ok().body(new BoxResponse(savedBox));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Box> getSingleBox(@PathVariable Long id) {
+  public ResponseEntity<BoxWithItemsResponse> getSingleBox(@PathVariable Long id) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -59,14 +61,14 @@ public class BoxController {
 
     Optional<Box> box = boxService.findBox(authenticatedUser.get(), id);
     if (!box.isPresent()) {
-      return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<BoxWithItemsResponse>(HttpStatus.NOT_FOUND);
     }
 
-    return ResponseEntity.ok(box.get());
+    return ResponseEntity.ok(new BoxWithItemsResponse(box.get()));
   }
 
   @GetMapping
-  public ResponseEntity<Page<Box>> getAllBoxes(/* No filters yet */) {
+  public ResponseEntity<Page<BoxResponse>> getAllBoxes(/* No filters yet */) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -74,8 +76,9 @@ public class BoxController {
 
     Pageable paging = PageRequest.of(0, 10);
     Page<Box> boxes = boxService.findBoxes(authenticatedUser.get(), paging);
+    Page<BoxResponse> response = boxes.map((Box box) -> new BoxResponse(box));
 
-    return ResponseEntity.ok(boxes);
+    return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{id}")
@@ -96,7 +99,7 @@ public class BoxController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Box> updateBox(@PathVariable Long id,
+  public ResponseEntity<BoxResponse> updateBox(@PathVariable Long id,
       @Validated({ Update.class }) @RequestBody BoxRequest updates) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
@@ -105,12 +108,12 @@ public class BoxController {
 
     Optional<Box> box = boxService.findBox(authenticatedUser.get(), id);
     if (!box.isPresent()) {
-      return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<BoxResponse>(HttpStatus.NOT_FOUND);
     }
 
     Box updatedBox = boxService.updateBox(box.get(), updates);
 
-    return ResponseEntity.ok(updatedBox);
+    return ResponseEntity.ok(new BoxResponse(updatedBox));
   }
 
   private Optional<User> getAuthenticatedUser() {
