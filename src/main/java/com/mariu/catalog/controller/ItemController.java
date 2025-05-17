@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mariu.catalog.dto.Create;
+import com.mariu.catalog.dto.ItemResponse;
 import com.mariu.catalog.dto.ItemRequest;
 import com.mariu.catalog.dto.Update;
 import com.mariu.catalog.model.Box;
@@ -44,7 +45,7 @@ public class ItemController {
   ItemService itemService;
 
   @PostMapping("/box/{boxId}/item")
-   public ResponseEntity<Item> addItem(@PathVariable Long boxId,
+    public ResponseEntity<ItemResponse> addItem(@PathVariable Long boxId,
       @Validated({ Create.class }) @RequestBody ItemRequest itemRequest) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
@@ -53,16 +54,16 @@ public class ItemController {
 
     Optional<Box> box = boxService.findBox(authenticatedUser.get(), boxId);
     if (!box.isPresent()) {
-      return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
+     return new ResponseEntity<ItemResponse>(HttpStatus.NOT_FOUND);
     }
 
     Item savedItem = itemService.addItem(box.get(), itemRequest);
 
-    return ResponseEntity.ok().body(savedItem);
+    return ResponseEntity.ok().body(new ItemResponse(savedItem));
   }
 
   @GetMapping("/item/{id}")
-  public ResponseEntity<Item> getSingleItem(@PathVariable Long id) {
+public ResponseEntity<ItemResponse> getSingleItem(@PathVariable Long id) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -70,14 +71,14 @@ public class ItemController {
 
     Optional<Item> item = itemService.findItem(id, authenticatedUser.get());
     if (!item.isPresent()) {
-      return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
+    return new ResponseEntity<ItemResponse>(HttpStatus.NOT_FOUND);
     }
 
-    return ResponseEntity.ok(item.get());
+    return ResponseEntity.ok(new ItemResponse(item.get()));
   }
 
   @GetMapping("/box/{boxId}/item")
-  public ResponseEntity<Page<Item>> getAllItems(@PathVariable Long boxId/* No filters yet */) {
+  public ResponseEntity<Page<ItemResponse>> getAllItems(@PathVariable Long boxId/* No filters yet */) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -85,13 +86,14 @@ public class ItemController {
 
     Optional<Box> box = boxService.findBox(authenticatedUser.get(), boxId);
     if (!box.isPresent()) {
-      return new ResponseEntity<Page<Item>>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<Page<ItemResponse>>(HttpStatus.NOT_FOUND);
     }
 
     Pageable paging = PageRequest.of(0, 10);
     Page<Item> items = itemService.findItemsForBox(box.get(), paging);
+ Page<ItemResponse> response = items.map((Item item) -> new ItemResponse(item));
 
-    return ResponseEntity.ok(items);
+     return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/item/{id}")
@@ -112,7 +114,7 @@ public class ItemController {
   }
 
   @PatchMapping("/item/{id}")
-  public ResponseEntity<Item> updateItem(@PathVariable Long id,
+ public ResponseEntity<ItemResponse> updateItem(@PathVariable Long id,
       @Validated({ Update.class }) @RequestBody ItemRequest updates) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
@@ -121,14 +123,14 @@ public class ItemController {
 
     Optional<Item> item = itemService.findItem(id, authenticatedUser.get());
     if (!item.isPresent()) {
-      return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
+     return new ResponseEntity<ItemResponse>(HttpStatus.NOT_FOUND);
     }
 
     Item updatedItem = itemService.updateItem(item.get(), updates);
 
-    return ResponseEntity.ok(updatedItem);
+    return ResponseEntity.ok(new ItemResponse(updatedItem));
   }
-  
+
   private Optional<User> getAuthenticatedUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
