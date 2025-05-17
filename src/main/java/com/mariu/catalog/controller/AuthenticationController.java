@@ -45,7 +45,7 @@ public class AuthenticationController {
     jwtCookie.setMaxAge(jwtUtils.expirationInSeconds());
     response.addCookie(jwtCookie);
   
-      return ResponseEntity.ok().build();
+      return ResponseEntity.noContent().build();
   }
 
   @PostMapping("/signup")
@@ -74,6 +74,6 @@ public class AuthenticationController {
     jwtCookie.setHttpOnly(true);
 
     response.addCookie(jwtCookie);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 }
