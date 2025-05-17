@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.mariu.catalog.dto.ItemRequest;
 import com.mariu.catalog.model.Box;
 import com.mariu.catalog.model.Item;
+import com.mariu.catalog.model.User;
 import com.mariu.catalog.repository.ItemRepository;
 
 @Service
@@ -21,8 +22,8 @@ public class ItemService {
     return itemRepository.save(new Item(box, itemRequest));
   }
 
-  public Optional<Item> findItem(Long id) {
-    return itemRepository.findById(id);
+  public Optional<Item> findItem(Long id, User user) {
+    return itemRepository.findByIdAndBox_CreatedBy(id, user);
   }
 
   public Page<Item> findItemsForBox(Box box, Pageable paging) {

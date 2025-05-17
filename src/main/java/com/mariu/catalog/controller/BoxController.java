@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,8 +39,8 @@ public class BoxController {
   BoxService boxService;
 
   @PostMapping
-   public ResponseEntity<Box> createBox(@Validated({ Create.class }) @RequestBody BoxRequest boxRequest) {
-     Optional<User> authenticatedUser = getAuthenticatedUser();
+  public ResponseEntity<Box> createBox(@Validated({ Create.class }) @RequestBody BoxRequest boxRequest) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -57,15 +57,16 @@ public class BoxController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Optional<Box> box = boxService.findBox(id);
+    Optional<Box> box = boxService.findBox(authenticatedUser.get(), id);
     if (!box.isPresent()) {
       return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
     }
 
     return ResponseEntity.ok(box.get());
   }
-@GetMapping
-   public ResponseEntity<Page<Box>> getAllBoxes(/* to do: No filters yet */) {
+
+  @GetMapping
+  public ResponseEntity<Page<Box>> getAllBoxes(/* No filters yet */) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -76,7 +77,7 @@ public class BoxController {
 
     return ResponseEntity.ok(boxes);
   }
-  
+
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteBox(@PathVariable Long id) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
@@ -84,21 +85,25 @@ public class BoxController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    Optional<Box> box = boxService.findBox(authenticatedUser.get(), id);
+    if (!box.isPresent()) {
+      return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
+    }
+
     boxService.removeBox(id);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-
   @PatchMapping("/{id}")
- public ResponseEntity<Box> updateBox(@PathVariable Long id,
+  public ResponseEntity<Box> updateBox(@PathVariable Long id,
       @Validated({ Update.class }) @RequestBody BoxRequest updates) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Optional<Box> box = boxService.findBox(id);
+    Optional<Box> box = boxService.findBox(authenticatedUser.get(), id);
     if (!box.isPresent()) {
       return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
     }
@@ -116,7 +121,7 @@ public class BoxController {
     }
 
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-   
+
     return Optional.of(userService.findByEmail(userDetails.getUsername()));
   }
 }

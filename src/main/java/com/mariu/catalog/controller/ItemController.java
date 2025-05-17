@@ -45,7 +45,7 @@ public class ItemController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Optional<Box> box = boxService.findBox(boxId);
+    Optional<Box> box = boxService.findBox(authenticatedUser.get(), boxId);
     if (!box.isPresent()) {
       return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
     }
@@ -55,7 +55,6 @@ public class ItemController {
     return ResponseEntity.ok().body(savedItem);
   }
 
-
   @GetMapping("/item/{id}")
   public ResponseEntity<Item> getSingleItem(@PathVariable Long id) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
@@ -63,21 +62,22 @@ public class ItemController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Optional<Item> item = itemService.findItem(id);
+    Optional<Item> item = itemService.findItem(id, authenticatedUser.get());
     if (!item.isPresent()) {
       return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
     }
 
     return ResponseEntity.ok(item.get());
   }
-@GetMapping("/box/{boxId}/item")
-  public ResponseEntity<Page<Item>> getAllItems(@PathVariable Long boxId/*No filters yet */) {
+
+  @GetMapping("/box/{boxId}/item")
+  public ResponseEntity<Page<Item>> getAllItems(@PathVariable Long boxId/* No filters yet */) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Optional<Box> box = boxService.findBox(boxId);
+    Optional<Box> box = boxService.findBox(authenticatedUser.get(), boxId);
     if (!box.isPresent()) {
       return new ResponseEntity<Page<Item>>(HttpStatus.NOT_FOUND);
     }
