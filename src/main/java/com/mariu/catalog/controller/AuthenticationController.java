@@ -45,7 +45,7 @@ public class AuthenticationController {
     jwtCookie.setMaxAge(jwtUtils.expirationInSeconds());
     response.addCookie(jwtCookie);
   
-      return ResponseEntity.ok().build()
+      return ResponseEntity.ok().build();
   }
 
   @PostMapping("/signup")
