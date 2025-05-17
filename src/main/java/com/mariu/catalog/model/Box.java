@@ -45,13 +45,13 @@ public class Box {
     this.name = boxRequest.getName();
     this.description = boxRequest.getDescription();
     this.location = boxRequest.getLocation();
-    this.color = boxRequest.getColor();
+    this.color = Color.valueOf(boxRequest.getColor().toUpperCase());
   }
 
  public Long getId() {
     return this.id;
   }
-   
+
   public User getCreatedBy() {
     return this.createdBy;
   }

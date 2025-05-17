@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mariu.catalog.dto.BoxRequest;
+import com.mariu.catalog.dto.Create;
+import com.mariu.catalog.dto.Update;
 import com.mariu.catalog.model.Box;
 import com.mariu.catalog.model.User;
 import com.mariu.catalog.services.BoxService;
@@ -35,9 +38,8 @@ public class BoxController {
   @Autowired
   BoxService boxService;
 
-
   @PostMapping
-  public ResponseEntity<Box> createBox(@RequestBody BoxRequest boxRequest) {
+   public ResponseEntity<Box> createBox(@Validated({ Create.class }) @RequestBody BoxRequest boxRequest) {
      Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -87,8 +89,10 @@ public class BoxController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+
   @PatchMapping("/{id}")
-  public ResponseEntity<Box> deleteBox(@PathVariable Long id, @RequestBody BoxRequest updates) {
+ public ResponseEntity<Box> updateBox(@PathVariable Long id,
+      @Validated({ Update.class }) @RequestBody BoxRequest updates) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

@@ -1,13 +1,14 @@
 package com.mariu.catalog.services;
 
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.mariu.catalog.dto.BoxRequest;
+import com.mariu.catalog.dto.Color;
 import com.mariu.catalog.model.Box;
 import com.mariu.catalog.model.User;
 import com.mariu.catalog.repository.BoxRepository;
@@ -31,5 +32,25 @@ public class BoxService {
 
   public void removeBox(Long id) {
     boxRepository.deleteById(id);
+  }
+
+  public Box updateBox(Box box, BoxRequest updates) {
+    if (updates.getName() != null) {
+      box.setName(updates.getName());
+    }
+
+    if (updates.getDescription() != null) {
+      box.setDescription(updates.getDescription());
+    }
+
+    if (updates.getLocation() != null) {
+      box.setLocation(updates.getLocation());
+    }
+
+    if (updates.getColor() != null) {
+      box.setColor(Color.valueOf(updates.getColor().toUpperCase()));
+    }
+
+    return boxRepository.save(box);
   }
 }
