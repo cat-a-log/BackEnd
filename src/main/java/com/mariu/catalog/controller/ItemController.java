@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ import com.mariu.catalog.services.ItemService;
 import com.mariu.catalog.services.UserService;
 
 @RestController
-@RequestMapping("/api/box")
+@RequestMapping("/api")
 public class ItemController {
   @Autowired
   UserService userService;
@@ -34,7 +35,7 @@ public class ItemController {
   @Autowired
   ItemService itemService;
 
-  @PostMapping("/{boxId}/item")
+  @PostMapping("/box/{boxId}/item")
   public ResponseEntity<Item> addItem(@PathVariable Long boxId, @RequestBody ItemRequest itemRequest) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
@@ -49,6 +50,22 @@ public class ItemController {
     Item savedItem = itemService.addItem(box.get(), itemRequest);
 
     return ResponseEntity.ok().body(savedItem);
+  }
+
+
+  @GetMapping("/item/{id}")
+  public ResponseEntity<Item> getSingleItem(@PathVariable Long id) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Optional<Item> item = itemService.findItem(id);
+    if (!item.isPresent()) {
+      return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
+    }
+
+    return ResponseEntity.ok(item.get());
   }
 
   private Optional<User> getAuthenticatedUser() {

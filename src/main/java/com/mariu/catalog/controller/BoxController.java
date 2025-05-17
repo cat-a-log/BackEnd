@@ -51,7 +51,7 @@ public class BoxController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Box> getSingleEvent(@PathVariable Long id) {
+  public ResponseEntity<Box> getSingleBox(@PathVariable Long id) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -65,7 +65,7 @@ public class BoxController {
     return ResponseEntity.ok(box.get());
   }
 @GetMapping
-  public ResponseEntity<Page<Box>> getAllEvents(/* to do: add filters */) {
+   public ResponseEntity<Page<Box>> getAllBoxes(/* to do: No filters yet */) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
