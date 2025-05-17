@@ -33,4 +33,12 @@ public class ItemService {
   public void removeItem(Long id) {
     itemRepository.deleteById(id);
   }
+
+  public Item updateItem(Item item, ItemRequest updates) {
+    if (updates.getName() != null) {
+      item.setName(updates.getName());
+    }
+
+    return itemRepository.save(item);
+  }
 }

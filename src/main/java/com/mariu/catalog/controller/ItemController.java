@@ -11,15 +11,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mariu.catalog.dto.Create;
 import com.mariu.catalog.dto.ItemRequest;
+import com.mariu.catalog.dto.Update;
 import com.mariu.catalog.model.Box;
 import com.mariu.catalog.model.Item;
 import com.mariu.catalog.model.User;
@@ -40,7 +44,8 @@ public class ItemController {
   ItemService itemService;
 
   @PostMapping("/box/{boxId}/item")
-  public ResponseEntity<Item> addItem(@PathVariable Long boxId, @RequestBody ItemRequest itemRequest) {
+   public ResponseEntity<Item> addItem(@PathVariable Long boxId,
+      @Validated({ Create.class }) @RequestBody ItemRequest itemRequest) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -104,6 +109,24 @@ public class ItemController {
     itemService.removeItem(id);
 
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PatchMapping("/item/{id}")
+  public ResponseEntity<Item> updateItem(@PathVariable Long id,
+      @Validated({ Update.class }) @RequestBody ItemRequest updates) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Optional<Item> item = itemService.findItem(id, authenticatedUser.get());
+    if (!item.isPresent()) {
+      return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
+    }
+
+    Item updatedItem = itemService.updateItem(item.get(), updates);
+
+    return ResponseEntity.ok(updatedItem);
   }
   
   private Optional<User> getAuthenticatedUser() {
