@@ -22,8 +22,8 @@ public class BoxService {
     return boxRepository.save(new Box(createdBy, boxRequest));
   }
 
-  public Optional<Box> findBox(Long id) {
-    return boxRepository.findById(id);
+  public Optional<Box> findBox(User user, Long id) {
+    return boxRepository.findByIdAndCreatedBy(id, user);
   }
 
   public Page<Box> findBoxes(User user, Pageable paging) {

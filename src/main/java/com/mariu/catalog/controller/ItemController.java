@@ -21,98 +21,114 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mariu.catalog.dto.BoxRequest;
 import com.mariu.catalog.dto.Create;
+import com.mariu.catalog.dto.ItemRequest;
 import com.mariu.catalog.dto.Update;
 import com.mariu.catalog.model.Box;
+import com.mariu.catalog.model.Item;
 import com.mariu.catalog.model.User;
 import com.mariu.catalog.services.BoxService;
+import com.mariu.catalog.services.ItemService;
 import com.mariu.catalog.services.UserService;
 
 @RestController
-@RequestMapping("/api/box")
-public class BoxController {
+@RequestMapping("/api")
+public class ItemController {
   @Autowired
   UserService userService;
 
   @Autowired
   BoxService boxService;
 
-  @PostMapping
-  public ResponseEntity<Box> createBox(@Validated({ Create.class }) @RequestBody BoxRequest boxRequest) {
+  @Autowired
+  ItemService itemService;
+
+  @PostMapping("/box/{boxId}/item")
+   public ResponseEntity<Item> addItem(@PathVariable Long boxId,
+      @Validated({ Create.class }) @RequestBody ItemRequest itemRequest) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Box savedBox = boxService.createBox(boxRequest, authenticatedUser.get());
-
-    return ResponseEntity.ok().body(savedBox);
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<Box> getSingleBox(@PathVariable Long id) {
-    Optional<User> authenticatedUser = getAuthenticatedUser();
-    if (!authenticatedUser.isPresent()) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
-
-    Optional<Box> box = boxService.findBox(authenticatedUser.get(), id);
+    Optional<Box> box = boxService.findBox(authenticatedUser.get(), boxId);
     if (!box.isPresent()) {
-      return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
     }
 
-    return ResponseEntity.ok(box.get());
+    Item savedItem = itemService.addItem(box.get(), itemRequest);
+
+    return ResponseEntity.ok().body(savedItem);
   }
 
-  @GetMapping
-  public ResponseEntity<Page<Box>> getAllBoxes(/* No filters yet */) {
+  @GetMapping("/item/{id}")
+  public ResponseEntity<Item> getSingleItem(@PathVariable Long id) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Optional<Item> item = itemService.findItem(id, authenticatedUser.get());
+    if (!item.isPresent()) {
+      return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
+    }
+
+    return ResponseEntity.ok(item.get());
+  }
+
+  @GetMapping("/box/{boxId}/item")
+  public ResponseEntity<Page<Item>> getAllItems(@PathVariable Long boxId/* No filters yet */) {
+    Optional<User> authenticatedUser = getAuthenticatedUser();
+    if (!authenticatedUser.isPresent()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Optional<Box> box = boxService.findBox(authenticatedUser.get(), boxId);
+    if (!box.isPresent()) {
+      return new ResponseEntity<Page<Item>>(HttpStatus.NOT_FOUND);
     }
 
     Pageable paging = PageRequest.of(0, 10);
-    Page<Box> boxes = boxService.findBoxes(authenticatedUser.get(), paging);
+    Page<Item> items = itemService.findItemsForBox(box.get(), paging);
 
-    return ResponseEntity.ok(boxes);
+    return ResponseEntity.ok(items);
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteBox(@PathVariable Long id) {
+  @DeleteMapping("/item/{id}")
+  public ResponseEntity<?> deleteItem(@PathVariable Long id) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Optional<Box> box = boxService.findBox(authenticatedUser.get(), id);
-    if (!box.isPresent()) {
+    Optional<Item> item = itemService.findItem(id, authenticatedUser.get());
+    if (!item.isPresent()) {
       return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
     }
 
-    boxService.removeBox(id);
+    itemService.removeItem(id);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PatchMapping("/{id}")
-  public ResponseEntity<Box> updateBox(@PathVariable Long id,
-      @Validated({ Update.class }) @RequestBody BoxRequest updates) {
+  @PatchMapping("/item/{id}")
+  public ResponseEntity<Item> updateItem(@PathVariable Long id,
+      @Validated({ Update.class }) @RequestBody ItemRequest updates) {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Optional<Box> box = boxService.findBox(authenticatedUser.get(), id);
-    if (!box.isPresent()) {
-      return new ResponseEntity<Box>(HttpStatus.NOT_FOUND);
+    Optional<Item> item = itemService.findItem(id, authenticatedUser.get());
+    if (!item.isPresent()) {
+      return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
     }
 
-    Box updatedBox = boxService.updateBox(box.get(), updates);
+    Item updatedItem = itemService.updateItem(item.get(), updates);
 
-    return ResponseEntity.ok(updatedBox);
+    return ResponseEntity.ok(updatedItem);
   }
-
+  
   private Optional<User> getAuthenticatedUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

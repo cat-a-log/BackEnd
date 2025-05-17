@@ -9,11 +9,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import com.mariu.catalog.model.Box;
+import com.mariu.catalog.model.Item;
 import com.mariu.catalog.model.User;
 
 @Repository
-public interface BoxRepository extends JpaRepository<Box, Long>, JpaSpecificationExecutor<Box> {
-  Page<Box> findByCreatedBy(User user, Pageable paging);
+public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificationExecutor<Item> {
+  Page<Item> findByBox(Box box, Pageable paging);
 
-  Optional<Box> findByIdAndCreatedBy(Long id, User user);
+  Optional<Item> findByIdAndBox_CreatedBy(Long id, User user);
 }
