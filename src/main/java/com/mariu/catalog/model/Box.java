@@ -1,5 +1,9 @@
 package com.mariu.catalog.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import com.mariu.catalog.dto.BoxRequest;
 import com.mariu.catalog.dto.Color;
 
@@ -16,18 +20,21 @@ public class Box {
   private String name;
 
   @Column(nullable = false)
-  private String description; // to do: max 100 characters
+  private String description; // max 100 characters
 
   @Column(nullable = false)
   private String location;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private Color color = Color.GREEN;
+  private Color color = Color.RED;
 
   @ManyToOne
   @JoinColumn(name = "created_by_user_id", nullable = false)
   private User createdBy;
+
+  @OneToMany(mappedBy = "box", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Item> items = new ArrayList<>();
 
   public Box(User createdBy, String name, String description, String location, Color color) {
     this.createdBy = createdBy;
@@ -37,10 +44,10 @@ public class Box {
     this.color = color;
   }
 
-   public Box() {
+  public Box() {
   }
 
-   public Box(User createdBy, BoxRequest boxRequest) {
+  public Box(User createdBy, BoxRequest boxRequest) {
     this.createdBy = createdBy;
     this.name = boxRequest.getName();
     this.description = boxRequest.getDescription();
@@ -48,7 +55,7 @@ public class Box {
     this.color = Color.valueOf(boxRequest.getColor().toUpperCase());
   }
 
- public Long getId() {
+  public Long getId() {
     return this.id;
   }
 
@@ -90,5 +97,13 @@ public class Box {
 
   public void setColor(Color color) {
     this.color = color;
+  }
+
+  public List<Item> getItems() {
+    return items;
+  }
+
+  public void setItems(List<Item> items) {
+    this.items = items;
   }
 }
