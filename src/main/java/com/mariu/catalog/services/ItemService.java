@@ -38,6 +38,9 @@ public class ItemService {
     if (updates.getName() != null) {
       item.setName(updates.getName());
     }
+    if (updates.getQuantity() > 0) {
+      item.setQuantity(updates.getQuantity());
+    }
 
     return itemRepository.save(item);
   }

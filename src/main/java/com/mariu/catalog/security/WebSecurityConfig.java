@@ -64,7 +64,7 @@ public class WebSecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
     String[] origins = allowedOrigins.split(",");
     config.setAllowedOrigins(List.of(origins));
-    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     config.setAllowedHeaders(List.of("*"));
     config.setAllowCredentials(true);
 

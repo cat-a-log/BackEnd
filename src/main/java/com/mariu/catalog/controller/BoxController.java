@@ -74,7 +74,7 @@ public class BoxController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Pageable paging = PageRequest.of(0, 10);
+    Pageable paging = PageRequest.of(0, 100);
     Page<Box> boxes = boxService.findBoxes(authenticatedUser.get(), paging);
     Page<BoxResponse> response = boxes.map((Box box) -> new BoxResponse(box));
 

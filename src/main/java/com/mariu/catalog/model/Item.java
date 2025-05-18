@@ -1,5 +1,7 @@
 package com.mariu.catalog.model;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.mariu.catalog.dto.ItemRequest;
 import jakarta.persistence.*;
 
@@ -16,10 +18,14 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "box_id", nullable = false)
     private Box box;
+    @Column(nullable = false)
+    @ColumnDefault ("1")
+    private Integer quantity = 1;
 
-    public Item(String name, Box box) {
+    public Item(String name, int quantity, Box box) {
         this.name = name;
         this.box = box;
+        this.quantity = quantity;
     }
 
     public Item() {
@@ -28,6 +34,7 @@ public class Item {
 
      public Item(Box box, ItemRequest itemRequest) {
     this.name = itemRequest.getName();
+    this.quantity = itemRequest.getQuantity();
     this.box = box;
   }
   
@@ -49,5 +56,13 @@ public class Item {
 
     public void setBox(Box box) {
         this.box = box;
+    }
+
+       public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }
