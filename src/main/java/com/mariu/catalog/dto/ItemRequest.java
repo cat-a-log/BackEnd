@@ -2,6 +2,7 @@ package com.mariu.catalog.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class ItemRequest {
@@ -9,11 +10,9 @@ public class ItemRequest {
   @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters", groups = { Create.class,
       Update.class })
   private String name;
-  @NotBlank(message = "Quantity cannot be blank", groups = { Create.class })
-  @Min(value=1, message= "Minimum quantity is 1", groups = { Create.class,
-      Update.class })
-  private Integer quantity;
-
+  @NotNull(message = "Quantity cannot be blank", groups = { Create.class })
+@Min(value = 1, message = "Minimum quantity is 1", groups = { Create.class, Update.class })
+private Integer quantity;
 
   public ItemRequest(String name, Integer quantity) {
     this.name = name;
