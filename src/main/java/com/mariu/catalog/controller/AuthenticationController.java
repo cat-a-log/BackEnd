@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.mariu.catalog.dto.AuthUser;
+import com.mariu.catalog.dto.ResponseWithError;
 import com.mariu.catalog.model.User;
 import com.mariu.catalog.repository.UserRepository;
 import com.mariu.catalog.security.JwtUtil;
@@ -49,9 +50,9 @@ public class AuthenticationController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<String> registerUser(@RequestBody AuthUser authUser) {
+  public ResponseEntity<ResponseWithError> registerUser(@RequestBody AuthUser authUser) {
     if (userRepository.existsByEmail(authUser.getEmail())) {
-      return ResponseEntity.badRequest().body("Error: Email is already taken!");
+      return ResponseEntity.badRequest().body(new ResponseWithError ("Error: Email is already taken!"));
     }
 
     User newUser = new User(
@@ -61,7 +62,7 @@ public class AuthenticationController {
 
     userRepository.save(newUser);
 
-    return ResponseEntity.ok("User registered successfully!");
+    return ResponseEntity.noContent().build();
   }
 
 
