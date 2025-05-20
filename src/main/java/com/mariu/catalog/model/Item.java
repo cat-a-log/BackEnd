@@ -1,6 +1,9 @@
 package com.mariu.catalog.model;
 
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.mariu.catalog.dto.ItemRequest;
 import jakarta.persistence.*;
@@ -21,11 +24,14 @@ public class Item {
     @Column(nullable = false)
     @ColumnDefault ("1")
     private Integer quantity = 1;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     public Item(String name, int quantity, Box box) {
         this.name = name;
         this.box = box;
         this.quantity = quantity;
+
     }
 
     public Item() {
@@ -64,5 +70,9 @@ public class Item {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
