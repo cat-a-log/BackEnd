@@ -9,12 +9,14 @@ public class ItemResponse {
   private String name;
   private Integer quantity;
   private LocalDateTime createdAt;
+  private Long boxId;
 
-  public ItemResponse(Long id, String name, Integer quantity, LocalDateTime createdAt) {
+  public ItemResponse(Long id, String name, Integer quantity, LocalDateTime createdAt, Long boxId) {
     this.id = id;
     this.name = name;
     this.quantity = quantity;
     this.createdAt = createdAt;
+    this.boxId = boxId;
   }
 
   public ItemResponse(Item item) {
@@ -22,6 +24,7 @@ public class ItemResponse {
     this.name = item.getName();
     this.quantity = item.getQuantity();
     this.createdAt = item.getCreatedAt();
+    this.boxId = item.getBox().getId();
   }
 
   public Long getId() {
@@ -38,5 +41,9 @@ public class ItemResponse {
 
   public LocalDateTime getCreatedAt() {
     return this.createdAt;
+  }
+
+  public Long getBoxId() {
+    return this.boxId;
   }
 }
