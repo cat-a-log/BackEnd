@@ -23,7 +23,7 @@ This backend provides the following functionalities to support the visual box or
     * Automatic generation of unique QR codes 🏷️ for each created box.
     * Storage and association of QR codes with their corresponding boxes 🔗📦🏷️. -->
 * **API Endpoints:**
-    * Provides a set of API endpoints 🌐 for communication with the frontend application (e.g., `/api/users`, `/api/boxes`, `/api/boxes/{box_id}/items`).
+    * Provides a set of API endpoints 🌐 for communication with the frontend application.
     * Supports standard HTTP methods (GET ➡️, POST 📤, PUT 💾, DELETE 🗑️) for data manipulation.
 * **Scalability and Adaptability:**
     * Designed to handle varying levels of data and user load 📈, suitable for both individual home organization 🏠 and small business inventory management 🏢.
