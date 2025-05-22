@@ -11,8 +11,8 @@ public class ItemRequest {
       Update.class })
   private String name;
   @NotNull(message = "Quantity cannot be blank", groups = { Create.class })
-@Min(value = 1, message = "Minimum quantity is 1", groups = { Create.class, Update.class })
-private Integer quantity;
+  @Min(value = 1, message = "Minimum quantity is 1", groups = { Create.class, Update.class })
+  private Integer quantity;
 
   public ItemRequest(String name, Integer quantity) {
     this.name = name;
@@ -27,4 +27,3 @@ private Integer quantity;
     return this.quantity;
   }
 }
-

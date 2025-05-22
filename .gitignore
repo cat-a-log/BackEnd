@@ -40,3 +40,5 @@ build/
 
 .env
 data/
+media/*
+!media/placeholder.png

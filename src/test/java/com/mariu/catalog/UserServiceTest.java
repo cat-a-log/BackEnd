@@ -27,7 +27,7 @@ public class UserServiceTest {
     
     @Test
     void findByEmail_UserExists_ReturnsUser() {
-        // Arrange (Given)
+        // Arrange (Give)
         String testEmail = "test@example.com";
         User mockUser = new User();
         mockUser.setEmail(testEmail);
@@ -48,7 +48,7 @@ public class UserServiceTest {
     void existsByEmail_UserExists_ReturnsTrue() {
         // Arrange
         String existentEmail = "existing@example.com";
-        // Configure mock to return true when user exists
+      
         when(userRepository.existsByEmail(existentEmail)).thenReturn(true);
 
         // Act
