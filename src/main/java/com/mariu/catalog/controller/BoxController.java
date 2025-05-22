@@ -68,7 +68,7 @@ public class BoxController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<BoxResponse>> getAllBoxes(/* No filters yet */) {
+  public ResponseEntity<Page<BoxResponse>> getAllBoxes() {
     Optional<User> authenticatedUser = getAuthenticatedUser();
     if (!authenticatedUser.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

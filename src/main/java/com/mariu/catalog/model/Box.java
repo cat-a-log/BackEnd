@@ -2,7 +2,6 @@ package com.mariu.catalog.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.mariu.catalog.dto.BoxRequest;
 import com.mariu.catalog.dto.Color;
@@ -20,7 +19,7 @@ public class Box {
   private String name;
 
   @Column(nullable = false)
-  private String description; // max 100 characters
+  private String description;
 
   @Column(nullable = false)
   private String location;

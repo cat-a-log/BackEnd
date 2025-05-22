@@ -17,33 +17,35 @@ public class Item {
 
     @Column(nullable = false)
     private String name;
-
+    @Column(nullable = true)
+    private String filePath;
     @ManyToOne
     @JoinColumn(name = "box_id", nullable = false)
     private Box box;
     @Column(nullable = false)
-    @ColumnDefault ("1")
+    @ColumnDefault("1")
     private Integer quantity = 1;
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public Item(String name, int quantity, Box box) {
+    public Item(String name, int quantity, Box box, String filePath) {
         this.name = name;
         this.box = box;
         this.quantity = quantity;
+        this.filePath = filePath;
 
     }
 
     public Item() {
     }
 
+    public Item(Box box, ItemRequest itemRequest, String filePath) {
+        this.name = itemRequest.getName();
+        this.quantity = itemRequest.getQuantity();
+        this.box = box;
+        this.filePath = filePath;
+    }
 
-     public Item(Box box, ItemRequest itemRequest) {
-    this.name = itemRequest.getName();
-    this.quantity = itemRequest.getQuantity();
-    this.box = box;
-  }
-  
     public Long getId() {
         return this.id;
     }
@@ -64,7 +66,7 @@ public class Item {
         this.box = box;
     }
 
-       public Integer getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
@@ -75,4 +77,17 @@ public class Item {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFilePath() {
+        if (this.filePath == null) {
+
+            return "placeholder.png";
+        }
+        return this.filePath;
+    }
+
 }

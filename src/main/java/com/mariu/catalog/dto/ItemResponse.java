@@ -35,7 +35,7 @@ public class ItemResponse {
     return this.name;
   }
 
-   public Integer getQuantity() {
+  public Integer getQuantity() {
     return this.quantity;
   }
 

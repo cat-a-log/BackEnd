@@ -49,7 +49,7 @@ This backend provides the following functionalities to support the visual box or
 ## ⚙️ Environment Setup and Running the Application
 
 - pgSQL (docker container, port: **54321**)
-- pgAdmin (docker container) available on <http://localhost:8881>
+- pgAdmin (docker container) available on <http://localhost:8080>
 - Spring boot
 
 ## Set up
