@@ -15,16 +15,13 @@ This backend provides the following functionalities to support the visual box or
     * Updating existing box information ✏️📦.
     * Deletion of boxes 🗑️📦.
 * **Item Management within Boxes:**
-    * Adding items to specific boxes, including name <0xF0><0x9F><0x97><0x82>️, quantity 🔢, and image uploads 📤🖼️.
+    * Adding items to specific boxes, including name, quantity 🔢, and image uploads 📤🖼️.
     * Viewing the contents of a box 👀📦.
-    * Editing item details within a box ✏️<0xF0><0x9F><0x97><0x82>️.
-    * Deleting items from a box 🗑️<0xF0><0x9F><0x97><0x82>️.
+    * Editing item details within a box ✏️.
+    * Deleting items from a box 🗑️.
 <!-- * **QR Code Generation:**
     * Automatic generation of unique QR codes 🏷️ for each created box.
     * Storage and association of QR codes with their corresponding boxes 🔗📦🏷️. -->
-* **Data Storage:**
-    * Utilizes a database 💾 to persistently store application data.
-    * Ensures data integrity and efficient retrieval 🚀.
 * **API Endpoints:**
     * Provides a set of API endpoints 🌐 for communication with the frontend application (e.g., `/api/users`, `/api/boxes`, `/api/boxes/{box_id}/items`).
     * Supports standard HTTP methods (GET ➡️, POST 📤, PUT 💾, DELETE 🗑️) for data manipulation.
@@ -85,6 +82,6 @@ API documentation is provided through swagger and can be found at <http://localh
 
 ## 👥 Author
 
-* **Mariuxi Olaya Ruiz:**
+* **Mariuxi Olaya:**
     * GitHub: [catmaluci](https://github.com/catmaluci/)
     * LinkedIn: [Mariuxi Olaya](https://www.linkedin.com/in/molaya)
